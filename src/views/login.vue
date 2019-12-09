@@ -41,11 +41,14 @@ export default {
     }
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    async submitForm(formName) {
+      await this.$refs[formName].validate((valid) => {
         if (valid) {
           api.login(this.user).then(res => {
-            console.log(res)
+            if (res.code == 200) {
+              this.$store.commit('SET_TOKEN', res.data.token)
+              this.$router.push('/')
+            }
           })
         }
       })

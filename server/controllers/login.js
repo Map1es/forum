@@ -1,17 +1,15 @@
 let login = async (ctx) => {
-  let
-    name = ctx.request.body.name || ''
+  let account = ctx.request.body.account || ''
   let password = ctx.request.body.password || ''
-  console.log(`signin with name: ${name}, password: ${password}`)
-  if (name === 'koa' && password === '12345') {
-    ctx.status = 200
-    ctx.message = '登录成功'
+  console.log(`signin with name: ${account}, password: ${password}`)
+  ctx.status = 200
+  if (account === '123' && password === '12345') {
+    ctx.body = { code: 200, data: { token: new Date().getTime() }, message: '登录成功' }
   } else {
-    ctx.status = 403
-    ctx.message = '登录失败'
+    ctx.body = { code: 304, message: '登录失败' }
   }
 }
 
 module.exports = {
-  'login': login
+  'POST /login': login
 }

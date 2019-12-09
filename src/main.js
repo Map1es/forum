@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import './plugins/axios'
 import App from './App.vue'
-import store from './store'
-import router from './router'
+import store from '@/store/common'
+import router from '@/router/common'
 
 import './styles/normalize.css'
 import './plugins/element.js'

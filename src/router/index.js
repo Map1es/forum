@@ -1,19 +1,21 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Login from '../views/login.vue'
 
-Vue.use(VueRouter)
+import login from '@/views/login.vue'
+import home from '@/views/home/home.vue'
 
-const routes = [
+export const index = [
+  {
+    path: '/login',
+    name: 'login',
+    component: login
+  },
   {
     path: '/',
-    name: 'login',
-    component: Login
+    name: 'home',
+    component: home
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: home
   }
 ]
-
-const router = new VueRouter({
-  routes
-})
-
-export default router
