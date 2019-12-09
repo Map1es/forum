@@ -22,6 +22,7 @@ module.exports = {
     // 禁止使用 var
     'no-var': 'error',
     'no-tabs': 'off',
+    'no-path-concat': 'off',
     // 函数名括号前不需要有空格
     'space-before-function-paren': 'off',
     // 代码块中避免多余留白
