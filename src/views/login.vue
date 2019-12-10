@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
 export default {
   data() {
     return {
@@ -47,7 +48,10 @@ export default {
           api.login(this.user).then(res => {
             if (res.code == 200) {
               this.$store.commit('SET_TOKEN', res.data.token)
+              this.Toast(res.message)
               this.$router.push('/')
+            } else {
+              this.Toast(res.message, 'error')
             }
           })
         }
@@ -55,25 +59,28 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+    },
+    Toast(message, type = 'success') {
+      Message({ message: message, type: type, duration: 1000 })
     }
   }
 }
 </script>
 
 <style lang="less">
-.login{
-  height: 100%;
+.login {
+	height: 100%;
 	width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
-.form{
-  width: 380px;
-  border: 1px solid #eeeeee;
-  padding: 20px;
-  .form-title{
-    text-align: center;
-  }
+.form {
+	width: 380px;
+	border: 1px solid #eeeeee;
+	padding: 20px;
+	.form-title {
+		text-align: center;
+	}
 }
 </style>

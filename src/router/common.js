@@ -12,7 +12,6 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   if (store.getters.getToken == '' && to.name != 'login') {
-    // router.push('/login')
     next('/login')
   }
   next()
