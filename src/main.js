@@ -1,10 +1,10 @@
 import Vue from 'vue'
-import './plugins/axios'
 import App from './App.vue'
 import store from '@/store/common'
 import router from '@/router/common'
 
 import './styles/normalize.css'
+import './styles/global.less'
 import './plugins/element.js'
 
 Vue.config.productionTip = false
