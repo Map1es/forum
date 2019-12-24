@@ -8,8 +8,8 @@
         <Header></Header>
       </el-header>
       <el-main class="main">
-        <div class="flex-dc fx-around list-item">
-          <Item v-for="item in list" :key="item"></Item>
+        <div class="flex-dc list-item">
+          <Item v-for="item in list" :key="item" class="item"></Item>
         </div>
         <el-pagination background layout="prev, pager, next" :total="1000" class="page">
         </el-pagination>
@@ -29,7 +29,7 @@ export default {
   components: { LeftMenu, Header, Item },
   data() {
     return {
-      list: [2, 1, 2, 2, 2, 2]
+      list: [2]
     }
   }
 }
@@ -54,17 +54,20 @@ export default {
 	flex-direction: column;
 	justify-content: space-between;
 	.list-item {
-    // margin-bottom: 30px;
-    height: 700px;
+		// margin-bottom: 30px;
+		height: 700px;
+		.item {
+			margin-bottom: 20px;
+		}
 	}
 	.page {
 		flex: 1;
-    float: right;
-    margin-top: 30px;
+		float: right;
+		margin-top: 30px;
 	}
 }
-.footer{
-  text-align: center;
-  line-height: 60px;
+.footer {
+	text-align: center;
+	line-height: 60px;
 }
 </style>

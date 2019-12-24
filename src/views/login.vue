@@ -5,10 +5,10 @@
         用户登录
       </h1>
       <el-form-item label="账号" prop="account">
-        <el-input v-model="user.account"></el-input>
+        <el-input v-model="user.account" @keyup.enter.native="submitForm('login')"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="user.password"></el-input>
+        <el-input v-model="user.password" @keyup.enter.native="submitForm('login')"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('login')">
