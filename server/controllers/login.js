@@ -1,43 +1,140 @@
-let mongoose = require('mongoose')
-mongoose.connect('mongodb://203.195.212.107:27017/forum')
-let db = mongoose.connection
-db.on('open', function(err) {
-  if (err) {
-    console.log('数据库连接失败')
-    throw err
-  }
-  console.log('数据库连接成功')
-})
+// let User = require('../models/user')
 
-let usersSchema = mongoose.Schema({
-  name: String,
-  password: String,
-  account: String,
-  artitleNumber: Number,
-  awesome: Number,
-  avatar: String
-})
+// let login = async (ctx) => {
+//   let account = ctx.request.query.account || ''
+//   let password = ctx.request.query.password || ''
+//   console.log(`登录name: ${account}, password: ${password}`)
+//   ctx.status = 200
+//   await User.findOne({ 'account': `${account}` }).then((res) => {
+//     if (res) {
+//       if (password == res.password) {
+//         ctx.body = { code: 200, data: { token: new Date().getTime() }, message: '登录成功' }
+//       } else {
+//         ctx.body = { code: 304, message: '密码错误' }
+//       }
+//     } else {
+//       ctx.body = { code: 304, message: '该账户没有注册' }
+//     }
+//   })
+// }
 
-let user = mongoose.model('user', usersSchema)
+const { check_token_code, create_token } = require('../utils/token')
+const User = require('../models/user')
+const sha1 = require('sha1')
+const { PWD_ENCODE_STR } = require('../utils/config')
+const xss = require('xss')
 
+// 用户登录
 let login = async (ctx) => {
-  let account = ctx.request.body.account || ''
-  let password = ctx.request.body.password || ''
-  console.log(`signin with name: ${account}, password: ${password}`)
-  ctx.status = 200
-  await user.findOne({ 'account': `${account}` }).then((res) => {
-    if (res) {
-      if (password == res.password) {
-        ctx.body = { code: 200, data: { token: new Date().getTime() }, message: '登录成功' }
-      } else {
-        ctx.body = { code: 304, message: '密码错误' }
+  let { user_id = '', user_pwd = '', code = '', code_token = '' } = ctx.request.body
+  try {
+    // 验证码判断
+    let mark = await check_token_code({ token: code_token, code })
+    if (!mark) {
+      ctx.body = {
+        code: 401,
+        msg: '登录失败，验证码错误!'
+      }
+      return
+    }
+    user_pwd = sha1(sha1(user_pwd + PWD_ENCODE_STR))
+    let res = await User.find({ user_id, user_pwd })
+    if (res.length === 0) {
+      ctx.body = {
+        code: 401,
+        msg: '登录失败，用户名或者密码错误!'
+      }
+      return
+    }
+    let token = create_token(user_id)
+    res[0].token = token
+    res[0].save()
+    ctx.body = {
+      code: 200,
+      msg: '登录成功!',
+      data: {
+        _id: res[0]._id,
+        user_name: res[0].user_name,
+        avatar: res[0].avatar,
+        token
+      }
+    }
+  } catch (e) {
+    console.log(e)
+    ctx.body = {
+      code: 500,
+      msg: '登录失败，服务器异常!'
+    }
+  }
+}
+let register = async (ctx) => {
+  let { user_name = '', user_id = '', user_pwd = '', re_user_pwd = '', avatar = '', code = '', code_token = '' } = ctx.request.body
+  try {
+    if (user_pwd.length < 5) {
+      ctx.body = {
+        code: 401,
+        msg: '注册失败，密码最少为5位！'
+      }
+      return
+    }
+    if (user_pwd !== re_user_pwd) {
+      ctx.body = {
+        code: 401,
+        msg: '注册失败，2次密码输入不一致!'
+      }
+      return
+    }
+    // 验证码判断
+    let mark = await check_token_code({ token: code_token, code })
+    if (!mark) {
+      ctx.body = {
+        code: 401,
+        msg: '登录失败，验证码错误!'
+      }
+      return
+    }
+    // 判断 user_id 是否重复
+    let res = await User.find({ user_id })
+    if (res.length !== 0) {
+      ctx.body = {
+        code: 409,
+        msg: '注册失败，登录账号重复了，换一个吧！'
+      }
+      return
+    }
+    user_pwd = sha1(sha1(user_pwd + PWD_ENCODE_STR))
+    // 防止xss攻击， 转义
+    user_name = xss(user_name)
+    let token = create_token(user_id)
+    let user = new User({ user_id, user_name, user_pwd, avatar, token })
+    res = await user.save()
+    if (res._id != null) {
+      ctx.body = {
+        code: 200,
+        msg: '注册成功!',
+        data: {
+          _id: res._id,
+          user_name,
+          avatar,
+          token
+        }
       }
     } else {
-      ctx.body = { code: 304, message: '该账户没有注册' }
+      ctx.body = {
+        code: 500,
+        msg: '注册失败，服务器异常!'
+      }
     }
-  })
+  } catch (e) {
+    ctx.body = {
+      code: 500,
+      msg: '注册失败，服务器异常！'
+    }
+  }
 }
 
+
 module.exports = {
-  'POST /login': login
+  'POST /login': login,
+  'POST /register': register
 }

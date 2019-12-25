@@ -3,7 +3,20 @@ const cors = require('koa2-cors')
 
 const bodyParser = require('koa-bodyparser')
 const controller = require('./controller')
+const mongoose = require('mongoose')
 const app = new Koa()
+// 连接数据库
+mongoose.connect('mongodb://203.195.212.107:27017/forum')
+let db = mongoose.connection
+db.on('open', function(err) {
+  if (err) {
+    console.log('数据库连接失败')
+    throw err
+  }
+  console.log('数据库连接成功')
+})
+
+
 app.use(cors())
 // log request URL:
 app.use(async (ctx, next) => {

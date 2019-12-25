@@ -49,7 +49,8 @@ module.exports = {
     'vue/max-attributes-per-line': 'off',
     // 没有内容的元素需要使用闭合标签
     'vue/html-self-closing': 'off',
-    'vue/component-name-in-template-casing': 'off'
+    'vue/component-name-in-template-casing': 'off',
+    'camelcase':'off'
   },
   // 配置全局变量
   globals: {
