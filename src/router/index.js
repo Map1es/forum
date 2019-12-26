@@ -17,11 +17,17 @@ export const index = [
   {
     path: '/',
     name: 'home',
-    component: home
+    component: home,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/home',
     name: 'home',
-    component: home
+    component: home,
+    meta: {
+      requiresAuth: true
+    }
   }
 ]

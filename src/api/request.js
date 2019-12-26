@@ -3,6 +3,10 @@
  * @file axios请求封装
  */
 import axios from 'axios'
+import store from '../store/common'
+import router from '../router/common'
+import { Message } from 'element-ui'
+let $message = Message
 
 const Axios = axios.create({})
 
@@ -25,59 +29,63 @@ Axios.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-
+// request拦截器，每次发送请求的时候拦截下来
+Axios.interceptors.request.use(
+  config => {
+    // 每次发送请求，检查 vuex 中是否有token,如果有放在headers中
+    if (store.getters.getToken) {
+      config.headers.Authorization = store.state.getToken
+    }
+    return config
+  },
+  err => {
+    return Promise.reject(err)
+  }
+)
 // 添加返回拦截器
 Axios.interceptors.response.use(
   response => {
-    return response.data
-  },
-  error => {
-    if (error && error.response) {
-      switch (error.response.status) {
-        case 400:
-          error.message = '请求错误'
-          break
-        case 401:
-          error.message = '登录过期，请重新登录'
-          // 跳到登录界面
-          localStorage.clear()
-          break
-        case 403:
-          error.message = '拒绝访问'
-          break
-        case 404:
-          error.message = '请求失败'
-          break
-        case 408:
-          error.message = '请求超时'
-          break
-        case 500:
-          error.message = '服务器内部错误'
-          break
-        case 501:
-          error.message = '服务未实现'
-          break
-        case 502:
-          error.message = '无法连接服务器'
-          break
-        case 503:
-          error.message = '服务不可用'
-          break
-        case 504:
-          error.message = '连接服务器超时'
-          break
-        case 505:
-          error.message = 'HTTP版本不受支持'
-          break
-      }
-      console.error(error.message)
-    } else {
-      error.message = '无法连接服务器'
-      console.error(error.message)
+    if (response.status === 200) {
+      return response.data
     }
-    // 对返回的错误处理
-
-    return Promise.reject(error)
+  },
+  err => {
+    let { response } = err
+    if (response !== null) {
+      // 这里为什么处理401错误,详见，server/untils/token check_token这个函数
+      if (response.status === 401) {
+        let msg = response.data || '请重新登录!'
+        $message({
+          message: msg,
+          type: 'error',
+          onClose () {
+            store.commit('remove') // token过期,清除
+            router.replace({ // 跳转到登录页面
+              path: '/login',
+              // 添加一个重定向后缀，等登录以后再到这里来
+              query: { redirect: router.currentRoute.fullPath }
+            })
+          }
+        })
+        return Promise.reject(err.response)
+      } else {
+        $message({
+          message: '出错了，请重新登陆',
+          type: 'error',
+          onClose () {
+            store.commit('remove') // token过期,清除
+            router.replace({ // 跳转到登录页面
+              path: '/login',
+              // 添加一个重定向后缀，等登录以后再到这里来
+              query: { redirect: router.currentRoute.fullPath }
+            })
+          }
+        })
+        return Promise.reject(err.response)
+      }
+    } else {
+      console.log(err)
+    }
   }
 )
 

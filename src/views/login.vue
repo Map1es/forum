@@ -75,6 +75,7 @@ export default {
           api.login(this.user).then(res => {
             if (res.code == 200) {
               this.$store.commit('SET_TOKEN', res.data.token)
+              this.$store.commit('SET_USER', { id: res.data._id, name: res.data.user_name, avatar: res.data.avatar })
               this.Toast(res.message)
               this.$router.push('/')
             } else {
