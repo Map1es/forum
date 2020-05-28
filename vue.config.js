@@ -15,7 +15,7 @@ module.exports = {
     proxy: {
       // proxy table example
       '/': {
-        target: 'http://127.0.0.1:3000', // l
+        target: 'http://127.0.0.1:7001', // l
         changeOrigin: true
       }
     }
