@@ -9,9 +9,10 @@ logs/
 .vscode
 *.swp
 *.lock
-*.js
+# *.js
 !.autod.conf.js
 
+# server.js
 app/**/*.js
 test/**/*.js
 config/**/*.js
