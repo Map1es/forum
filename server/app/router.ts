@@ -3,5 +3,5 @@ import { Application } from 'egg';
 export default (app: Application) => {
   const { controller, router } = app;
 
-  router.get('/index', controller.home.index);
+  router.get('/api/index', controller.home.index);
 };
