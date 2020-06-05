@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    {{ res }}
-    <!-- <router-view></router-view> -->
+    <router-view></router-view>
   </div>
 </template>
 
@@ -13,12 +12,6 @@ export default {
     return {
       res: ''
     }
-  },
-  created() {
-    api.getCode().then(res => {
-      // console.log(res)
-      this.res = res
-    })
   }
 }
 </script>

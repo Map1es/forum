@@ -5,8 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "server": "supervisor server/app.js"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "ali-oss": "^6.3.1",
@@ -17,7 +16,7 @@
     "element-ui": "^2.4.5",
     "gd-bmp": "^1.2.4",
     "jsonwebtoken": "^8.5.1",
-    "koa": "^2.11.0",
+    "koa": "^2.12.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
     "koa-sso": "^1.2.2",
